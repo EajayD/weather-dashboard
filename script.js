@@ -25,6 +25,7 @@ function formSubmit(event){
     var cityName = cityInput.value.trim();
         if (cityName){
             getData(cityName);
+            getForecast(cityName);
         }
 }
 
@@ -69,4 +70,75 @@ function displayWeather(weather, cityInput){
     weatherCurrent.appendChild(temperature);
     weatherCurrent.appendChild(humidity);
     weatherCurrent.appendChild(windSpeed);
+}
+
+// global variables for 5 day forecast
+var forecast = document.querySelector("#forecast");
+var fiveDay = document.querySelector("#fiveday-cards");
+
+function getForecast(cityName){
+    var RequestUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&units=imperial&appid=" + apiKey;
+    fetch(RequestUrl)
+        .then(function (response) {
+            console.log(response)
+            return response.json();
+        })
+        .then(function (data){
+            console.log(data);
+            displayForecast(data);
+        })
+}
+function displayForecast(weather){
+
+    // clear old data
+    fiveDay.textContent = ""
+    forecast.textContent = "5-Day Forecast:";
+
+    // for loop for 5 days
+    var cards = weather.list;
+        for(var i=5; i < cards.length; i=i+8){
+       var dailyForecast = cards[i];
+        
+       console.log(dailyForecast);
+
+       var forecastEl=document.createElement("div");
+       forecastEl.classList = "card bg-primary text-light col-2 m-2";
+
+       //display date
+       var forecastDate = document.createElement("h5")
+       forecastDate.textContent = moment.unix(dailyForecast.dt).format("MMM D, YYYY");
+       forecastDate.classList = "card-header text-center"
+
+       
+       //pretty icon
+       var weatherIcon = document.createElement("img")
+       weatherIcon.classList = "card-body text-center";
+       weatherIcon.setAttribute("src", `https://openweathermap.org/img/wn/${dailyForecast.weather[0].icon}@2x.png`);  
+       forecastEl.appendChild(weatherIcon);
+       
+       //display temp
+       var forecastTemp = document.createElement("span");
+       forecastTemp.classList = "card-body text-center";
+       forecastTemp.textContent = "Temp: " + dailyForecast.main.temp + " °F";
+
+       // display humidity 
+       var forecastHum = document.createElement("span");
+       forecastHum.classList = "card-body text-center";
+       forecastHum.textContent ="Humidity: " + dailyForecast.main.humidity + "  %";
+
+       // display wind
+       var forecastWind = document.createElement("span");
+       forecastWind.textContent = "Wind Speed: " + dailyForecast.wind.speed + " MPH";
+       forecastWind.classList = "card-body text-center";
+
+       //append to card
+       forecastEl.appendChild(forecastDate);
+       forecastEl.appendChild(forecastTemp);
+       forecastEl.appendChild(forecastHum);
+       forecastEl.appendChild(forecastWind)
+
+       //append to container to display as row
+        fiveDay.appendChild(forecastEl);
+    }
+
 }
