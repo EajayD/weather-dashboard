@@ -19,7 +19,7 @@ To start simply click the link below to get started. Then enter a city in the se
 
 ## Deployed Link
 
-* [See Live Site - Click me!]()
+* [See Live Site - Click me!](https://eajayd.github.io/weather-dashboard/)
 
 
 ## Preview
