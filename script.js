@@ -26,7 +26,11 @@ function formSubmit(event){
         if (cityName){
             getData(cityName);
             getForecast(cityName);
+            cities.unshift({cityName}); // unshift allows searches to be stacked on top of each other
+            cityInput.value = ""; // clear form
         }
+        save(); //save to storage
+        history(cityName); // call on history function to display history 
 }
 
 cityForm.addEventListener("submit", formSubmit);
@@ -142,3 +146,36 @@ function displayForecast(weather){
     }
 
 }
+
+// empty array for searches
+var cities = [];
+var pastSearchButton = document.querySelector("#past-search-buttons");
+
+
+//local storage set
+function save(){
+    localStorage.setItem("cities", JSON.stringify(cities));
+};
+
+
+// create button element so that search shows up as a clickable object in order to show its data when clicked
+function history(previous){
+    city = document.createElement("button");
+    city.textContent = previous;
+    city.classList = "d-flex w-100 btn-light border p-2";
+    city.setAttribute("data-city", previous); 
+    city.setAttribute("type", "submit");
+
+    pastSearchButton.prepend(city);
+}
+
+// calls on the data previously searched for when function is called
+function historySearch(event){
+    var prev = event.target.getAttribute("data-city");
+    if (prev){
+        getData(prev);
+        getForecast(prev);
+    }
+}
+
+pastSearchButton.addEventListener("click", historySearch);
